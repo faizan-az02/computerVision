@@ -7,6 +7,7 @@ camera = VideoCamera()
 
 @app.route('/')
 def index():
+
     snapshots = os.listdir('static/snapshots')
     snapshots.sort(reverse=True)
     return render_template('index.html', snapshots=snapshots)
@@ -14,6 +15,7 @@ def index():
 
 @app.route('/video_feed')
 def video_feed():
+
     return Response(
         camera.stream(),
         mimetype='multipart/x-mixed-replace; boundary=frame'
@@ -21,6 +23,7 @@ def video_feed():
 
 @app.route('/capture')
 def capture():
+    
     filename = camera.capture_frame()
     return redirect(url_for('index'))
 
