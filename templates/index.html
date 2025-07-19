@@ -88,6 +88,16 @@
             transform: translateY(0);
         }
 
+        .capture-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .capture-btn.loading {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
         .snapshots-section {
             margin-top: 50px;
         }
@@ -186,6 +196,24 @@
             51%, 100% { opacity: 0.3; }
         }
 
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .success-message.show {
+            transform: translateX(0);
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -223,34 +251,83 @@
             <div class="camera-section">
                 <img src="{{ url_for('video_feed') }}" class="camera-feed" width="640" height="480" alt="Live Camera Feed">
                 
-                <form action="{{ url_for('capture') }}" method="get">
-                    <button type="submit" class="capture-btn">
-                        Capture Snapshot
-                    </button>
-                </form>
+                <button type="button" class="capture-btn" onclick="captureSnapshot()">
+                    Capture Snapshot
+                </button>
             </div>
 
             <div class="snapshots-section">
                 <h2 class="section-title">Saved Snapshots</h2>
                 
-                {% if snapshots %}
-                    <div class="snapshots-grid">
-                        {% for file in snapshots %}
-                            <div class="snapshot-item">
-                                <img src="{{ url_for('static', filename='snapshots/' + file) }}" alt="Snapshot">
-                                <div class="snapshot-info">
-                                    <div class="snapshot-date">{{ file }}</div>
+                <div id="snapshots-container">
+                    {% if snapshots %}
+                        <div class="snapshots-grid">
+                            {% for file in snapshots %}
+                                <div class="snapshot-item">
+                                    <img src="{{ url_for('static', filename='snapshots/' + file) }}" alt="Snapshot">
+                                    <div class="snapshot-info">
+                                        <div class="snapshot-date">{{ file }}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="no-snapshots">
-                        No snapshots captured yet. Click the capture button above to take your first photo!
-                    </div>
-                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-snapshots">
+                            No snapshots captured yet. Click the capture button above to take your first photo!
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="success-message" id="success-message">
+        Snapshot captured successfully!
+    </div>
+
+    <script>
+        function captureSnapshot() {
+            const button = document.querySelector('.capture-btn');
+            const originalText = button.textContent;
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            button.classList.add('loading');
+            button.textContent = 'Capturing...';
+            
+            fetch('/capture')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        showSuccessMessage();
+                        
+                        // Reload snapshots after a short delay
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error capturing snapshot:', error);
+                    alert('Error capturing snapshot. Please try again.');
+                })
+                .finally(() => {
+                    // Re-enable button
+                    button.disabled = false;
+                    button.classList.remove('loading');
+                    button.textContent = originalText;
+                });
+        }
+
+        function showSuccessMessage() {
+            const message = document.getElementById('success-message');
+            message.classList.add('show');
+            
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

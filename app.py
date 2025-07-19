@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, redirect, url_for
+from flask import Flask, render_template, Response, redirect, url_for, jsonify
 from camera import VideoCamera
 import os
 
@@ -9,6 +9,9 @@ camera = VideoCamera()
 def index():
 
     snapshots = os.listdir('static/snapshots')
+    # Filter out non-image files
+    image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
+    snapshots = [f for f in snapshots if any(f.lower().endswith(ext) for ext in image_extensions)]
     snapshots.sort(reverse=True)
     return render_template('index.html', snapshots=snapshots)
 
@@ -25,7 +28,7 @@ def video_feed():
 def capture():
     
     filename = camera.capture_frame()
-    return redirect(url_for('index'))
+    return jsonify({'success': True, 'filename': filename})
 
 if __name__ == '__main__':
     os.makedirs("static/snapshots", exist_ok=True)
