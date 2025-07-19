@@ -40,45 +40,21 @@ smart_surveillance/
 
 ---
 
-## Installation
-
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/your-username/smart_surveillance.git
-cd smart_surveillance
-```
-
-### 2. Install dependencies
-
-```bash
-pip install flask opencv-python
-```
-
----
-
 ## Usage
 
-```bash
+Run:
 python app.py
-```
 
 Then visit:  
-👉 http://localhost:5000
-
----
+http://localhost:5000
 
 ## Captured Snapshots
 
 All snapshots are saved to:
 
-```
 static/snapshots/
-```
 
 They are timestamped and displayed at the bottom of the UI.
-
----
 
 ## Future Extensions
 
