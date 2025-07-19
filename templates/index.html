@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Surveillance</title>
+</head>
+<body>
+    <h2>Live Camera Feed</h2>
+    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    
+    <form action="{{ url_for('capture') }}" method="get">
+        <button type="submit">Capture Snapshot</button>
+    </form>
+
+    <h3>Saved Snapshots</h3>
+    
+    {% for file in snapshots %}
+        <img src="{{ url_for('static', filename='snapshots/' + file) }}" width="160">
+    {% endfor %}
+
+</body>
+</html>
