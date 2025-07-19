@@ -42,7 +42,7 @@ smart_surveillance/
 
 ## Usage
 
-Run:
+Run:<br>
 python app.py
 
 Then visit:  
