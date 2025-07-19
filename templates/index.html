@@ -1,21 +1,256 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Smart Surveillance</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapshot Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .camera-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .camera-feed {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            border: 3px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+
+        .camera-feed:hover {
+            transform: scale(1.02);
+        }
+
+        .capture-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+            font-weight: 600;
+        }
+
+        .capture-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .capture-btn:active {
+            transform: translateY(0);
+        }
+
+        .snapshots-section {
+            margin-top: 50px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 2px;
+        }
+
+        .snapshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .snapshot-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .snapshot-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .snapshot-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .snapshot-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .snapshot-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .no-snapshots {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 1.2rem;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #27ae60;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .live-indicator {
+            background: #e74c3c;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .camera-feed {
+                width: 100%;
+                height: auto;
+            }
+
+            .snapshots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Live Camera Feed</h2>
-    <img src="{{ url_for('video_feed') }}" width="640" height="480">
-    
-    <form action="{{ url_for('capture') }}" method="get">
-        <button type="submit">Capture Snapshot</button>
-    </form>
+    <div class="container">
+        <div class="header">
+            <h1>Snapshot Application</h1>
+            <p><span class="status-indicator live-indicator"></span>Live Monitoring System</p>
+        </div>
 
-    <h3>Saved Snapshots</h3>
-    
-    {% for file in snapshots %}
-        <img src="{{ url_for('static', filename='snapshots/' + file) }}" width="160">
-    {% endfor %}
+        <div class="main-content">
+            <div class="camera-section">
+                <img src="{{ url_for('video_feed') }}" class="camera-feed" width="640" height="480" alt="Live Camera Feed">
+                
+                <form action="{{ url_for('capture') }}" method="get">
+                    <button type="submit" class="capture-btn">
+                        Capture Snapshot
+                    </button>
+                </form>
+            </div>
 
+            <div class="snapshots-section">
+                <h2 class="section-title">Saved Snapshots</h2>
+                
+                {% if snapshots %}
+                    <div class="snapshots-grid">
+                        {% for file in snapshots %}
+                            <div class="snapshot-item">
+                                <img src="{{ url_for('static', filename='snapshots/' + file) }}" alt="Snapshot">
+                                <div class="snapshot-info">
+                                    <div class="snapshot-date">{{ file }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-snapshots">
+                        No snapshots captured yet. Click the capture button above to take your first photo!
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>
