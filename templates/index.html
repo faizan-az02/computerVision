@@ -292,6 +292,14 @@
     </div>
 
     <script>
+        let currentSnapshots = [];
+        
+        // Initialize current snapshots on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentSnapshots();
+            startPolling();
+        });
+
         function captureSnapshot() {
             const button = document.querySelector('.capture-btn');
             const originalText = button.textContent;
@@ -308,9 +316,9 @@
                         // Show success message
                         showSuccessMessage();
                         
-                        // Reload snapshots after a short delay
+                        // Check for new snapshots after a short delay
                         setTimeout(() => {
-                            location.reload();
+                            checkForNewSnapshots();
                         }, 1000);
                     }
                 })
@@ -333,6 +341,66 @@
             setTimeout(() => {
                 message.classList.remove('show');
             }, 3000);
+        }
+
+        function updateCurrentSnapshots() {
+            const container = document.getElementById('snapshots-container');
+            const snapshotItems = container.querySelectorAll('.snapshot-item img');
+            currentSnapshots = Array.from(snapshotItems).map(img => {
+                const src = img.src;
+                return src.split('/').pop(); // Extract filename from src
+            });
+        }
+
+        function checkForNewSnapshots() {
+            fetch('/check_snapshots')
+                .then(response => response.json())
+                .then(data => {
+                    const newSnapshots = data.snapshots;
+                    
+                    // Check if there are new snapshots
+                    if (newSnapshots.length > currentSnapshots.length) {
+                        // Update the gallery
+                        updateGallery(newSnapshots);
+                        currentSnapshots = newSnapshots;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking snapshots:', error);
+                });
+        }
+
+        function updateGallery(snapshots) {
+            const container = document.getElementById('snapshots-container');
+            
+            if (snapshots.length === 0) {
+                container.innerHTML = `
+                    <div class="no-snapshots">
+                        No snapshots captured yet. Click the capture button above to take your first photo!
+                    </div>
+                `;
+                return;
+            }
+
+            let galleryHTML = '<div class="snapshots-grid">';
+            snapshots.forEach(file => {
+                galleryHTML += `
+                    <div class="snapshot-item">
+                        <img src="/static/snapshots/${file}" alt="Snapshot">
+                        <div class="snapshot-info">
+                            <div class="snapshot-date">${file}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            galleryHTML += '</div>';
+            
+            container.innerHTML = galleryHTML;
+        }
+
+        function startPolling() {
+            // Check for new snapshots every 3 seconds
+            setInterval(checkForNewSnapshots, 3000);
         }
     </script>
 </body>
