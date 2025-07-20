@@ -8,6 +8,7 @@ A lightweight, Flask-based web application that captures live video using OpenCV
 
 - Live webcam stream via browser (MJPEG)
 - Object Detection with YOLOv8
+- Capture snapshots for a specific object
 - Snapshot capture with a button
 - Snapshots stored locally and viewable in-browser
 - Clean, minimal architecture with Flask & OpenCV
@@ -17,13 +18,14 @@ A lightweight, Flask-based web application that captures live video using OpenCV
 
 ## How It Works
 
-1. `camera.py` uses OpenCV to capture frames from the webcam.
+1. `camera.py` uses OpenCV to capture frames from the webcam, is home for YOLOv8 Model, and detection logic.
 2. `app.py` runs a Flask server with endpoints:
    - `/` → UI page with live stream and snapshot button
    - `/video_feed` → MJPEG stream of camera feed
    - `/capture` → Captures and stores snapshot
 3. Snapshots are saved under `static/snapshots/` and listed in the UI.
-
+4. In the current logic, app detects "cellphone" label, captures that frame.
+5. The gallery loads new image after 3 seconds using the polling logic, and also when the image is captured manually.
 ---
 
 ## Usage
