@@ -1,31 +1,17 @@
 # Snapshots Web App
 
-A lightweight, Flask-based web application that captures live video using OpenCV, displays it in your browser, and allows you to take snapshots with a click.
+A lightweight, Flask-based web application that captures live video using OpenCV, displays it in your browser, has YOLOv8 applied for detection of the objects and allows you to take snapshots with a click.
 
 ---
 
 ## Features
 
 - Live webcam stream via browser (MJPEG)
+- Object Detection with YOLOv8
 - Snapshot capture with a button
 - Snapshots stored locally and viewable in-browser
 - Clean, minimal architecture with Flask & OpenCV
 - Easily extendable for object detection (e.g., weapons, intruders)
-
----
-
-## Project Structure
-
-```
-smart_surveillance/
-├── app.py               # Flask application
-├── camera.py            # OpenCV webcam interface
-├── templates/
-│   └── index.html       # Live view & snapshot UI
-├── static/
-│   └── snapshots/       # Captured snapshot storage
-└── README.md            # This file
-```
 
 ---
 
@@ -60,7 +46,6 @@ They are timestamped and displayed at the bottom of the UI.
 
 You can easily extend this project to include:
 
-- YOLOv8 or other object detection
 - Email or Telegram alert system
 - Zone-based motion detection
 - Face/person recognition
