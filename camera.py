@@ -2,6 +2,7 @@ import cv2
 from datetime import datetime
 import os
 from ultralytics import YOLO
+import requests
 
 class VideoCamera:
     
@@ -16,17 +17,24 @@ class VideoCamera:
         ret, frame = self.cap.read()
         if not ret:
             return None
+        
         # Run YOLOv8 detection
         results = self.model(frame, verbose=False)[0]
+
         # Draw bounding boxes and labels
         for box in results.boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             cls = int(box.cls[0])
             label = self.model.names[cls]
             conf = float(box.conf[0])
+            
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.putText(frame, f'{label} {conf:.2f}', (x1, y1 - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            
+        if label == 'cell phone':
+            requests.post('http://127.0.0.1:5000/capture')
+        
         _, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
 
