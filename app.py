@@ -24,11 +24,20 @@ def video_feed():
         mimetype='multipart/x-mixed-replace; boundary=frame'
     )
 
-@app.route('/capture')
+@app.route('/capture', methods=['POST', 'GET'])
 def capture():
     
     filename = camera.capture_frame()
     return jsonify({'success': True, 'filename': filename})
+
+@app.route('/check_snapshots')
+def check_snapshots():
+    snapshots = os.listdir('static/snapshots')
+    # Filter out non-image files
+    image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
+    snapshots = [f for f in snapshots if any(f.lower().endswith(ext) for ext in image_extensions)]
+    snapshots.sort(reverse=True)
+    return jsonify({'snapshots': snapshots})
 
 if __name__ == '__main__':
     os.makedirs("static/snapshots", exist_ok=True)
