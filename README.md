@@ -24,7 +24,7 @@ A lightweight, Flask-based web application that captures live video using OpenCV
    - `/video_feed` → MJPEG stream of camera feed
    - `/capture` → Captures and stores snapshot
 3. Snapshots are saved under `static/snapshots/` and listed in the UI.
-4. In the current logic, app detects "cellphone" label, captures that frame.
+4. In the current logic, app detects "cellphone" label, captures that frame. You can change it in the camera.py, where the detection "IF" is placed.
 5. The gallery loads new image after 3 seconds using the polling logic, and also when the image is captured manually.
 ---
 
