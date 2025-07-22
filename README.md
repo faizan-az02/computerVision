@@ -27,7 +27,8 @@ The app also detects a sudden blackout (due to any tempering being done with the
    - `/capture` → Captures and stores snapshot
 3. Snapshots are saved under `static/snapshots/` and listed in the UI.
 4. In the current logic, app detects "cellphone" label, captures that frame. You can change it in the camera.py, where the detection "IF" is placed.
-5. The gallery loads new image after 3 seconds using the polling logic, and also when the image is captured manually.
+5. The app detects a sudden blackout in the camera's output which might be due to some sort of tempering or sudden power outage.
+6. The gallery loads new image after 3 seconds using the polling logic, and also when the image is captured manually.
 ---
 
 ## Usage
