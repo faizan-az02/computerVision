@@ -9,7 +9,7 @@ class VideoCamera:
     
     def __init__(self):
         self.cap = cv2.VideoCapture(0)
-        self.model = YOLO('yolov8n.pt')  # Make sure yolov8n.pt is in the directory or provide the correct path
+        self.model = YOLO('yolov8n.pt')
 
     def __del__(self):
         self.cap.release()
@@ -19,15 +19,13 @@ class VideoCamera:
         if not ret:
             return None
         
-        mean_brightness = np.mean(frame)  # Simple mean across all RGB channels
+        mean_brightness = np.mean(frame)
         if mean_brightness < 30:
             print("Blackout detected!")
             requests.post('http://127.0.0.1:5000/capture')
-            # Do not interrupt the stream; continue as normal
         
-        # Run YOLOv8 detection
         results = self.model(frame, verbose=False)[0]
-        # Draw bounding boxes and labels
+        
         for box in results.boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             cls = int(box.cls[0])
