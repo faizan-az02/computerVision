@@ -1,6 +1,7 @@
 # Snapshots Web App
 
 A lightweight, Flask-based web application that captures live video using OpenCV, displays it in your browser, has YOLOv8 applied for detection of the objects, capture snapshots of specific ones and also allows you to take snapshots with a click.
+The app also detects a sudden blackout (due to any tempering being done with the camera), snapshots it and shows it on the UI.
 
 ---
 
@@ -8,6 +9,7 @@ A lightweight, Flask-based web application that captures live video using OpenCV
 
 - Live webcam stream via browser (MJPEG)
 - Object Detection with YOLOv8
+- Detects sudden blackouts
 - Capture snapshots for a specific object
 - Snapshot capture with a button
 - Snapshots stored locally and viewable in-browser
