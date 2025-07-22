@@ -15,7 +15,6 @@ def index():
     snapshots.sort(reverse=True)
     return render_template('index.html', snapshots=snapshots)
 
-
 @app.route('/video_feed')
 def video_feed():
 

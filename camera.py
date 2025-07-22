@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 from ultralytics import YOLO
 import requests
+import numpy as np
 
 class VideoCamera:
     
@@ -18,12 +19,11 @@ class VideoCamera:
         if not ret:
             return None
         
-        import numpy as np
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        mean_brightness = np.mean(gray)
+        mean_brightness = np.mean(frame)  # Simple mean across all RGB channels
         if mean_brightness < 20:
             print("Blackout detected!")
             requests.post('http://127.0.0.1:5000/capture')
+            # Do not interrupt the stream; continue as normal
         
         # Run YOLOv8 detection
         results = self.model(frame, verbose=False)[0]
@@ -37,9 +37,10 @@ class VideoCamera:
             cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
             cv2.putText(frame, f'{label} {conf:.2f}', (x1, y1 - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
+            
             if label == 'cell phone':
                 requests.post('http://127.0.0.1:5000/capture')
-            
+        
         _, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
 
