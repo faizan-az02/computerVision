@@ -24,7 +24,6 @@ class VideoCamera:
         if mean_brightness < 20:
             print("Blackout detected!")
             requests.post('http://127.0.0.1:5000/capture')
-            # Do not interrupt the stream; continue as normal
         
         # Run YOLOv8 detection
         results = self.model(frame, verbose=False)[0]
@@ -41,8 +40,6 @@ class VideoCamera:
             if label == 'cell phone':
                 requests.post('http://127.0.0.1:5000/capture')
             
-
-        
         _, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
 
