@@ -20,7 +20,7 @@ class VideoCamera:
             return None
         
         mean_brightness = np.mean(frame)  # Simple mean across all RGB channels
-        if mean_brightness < 20:
+        if mean_brightness < 30:
             print("Blackout detected!")
             requests.post('http://127.0.0.1:5000/capture')
             # Do not interrupt the stream; continue as normal
